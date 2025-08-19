@@ -2,7 +2,7 @@
   <img src="https://github.com/user-attachments/assets/85affe7b-d9c2-4e5f-af73-dea36243c64f" alt="TailorMade" />
 </p>
 
-**TailorMade** is a *high-performance* C++20 **ECS** library with on-the-fly entity creation and **JSON-based** definitions for entities, components, and their relationships.  
+**TailorMade** is a C++20 **ECS** library with on-the-fly entity creation and **JSON-based** definitions for entities, components, and their relationships.  
 It supports **snapshots** for saving and reloading, powerful **entity tagging**, and **custom types** that simplify your workflow.
 
 ## Table of Contents
