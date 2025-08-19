@@ -8,6 +8,7 @@ It supports **snapshots** for saving and reloading, powerful **entity tagging**,
 ## Table of Contents
 - [Features](#features)
 - [Architecture](#architecture)
+- [Dependencies](#dependencies)
 - [Documentation](#documentation)
 - [Usage Example](#usage-example)
 - [Contributing](#contributing)
@@ -29,6 +30,10 @@ Here is the class diagram I designed and used to build this project :
 <img width="2807" height="1638" alt="image" src="https://github.com/user-attachments/assets/0c0590e7-7097-4a4c-8bef-c820fd1f28a6" />
 **NB**: There are some differences between this diagram and the final implementation.  
 During development, I made a few *implementation choices* that aren’t reflected in the diagram.
+
+## Dependencies
+This library depends on [nlohmann/json](https://github.com/nlohmann/json).  
+You need to install it before building this project.
 
 ## Documentation
 There is also a [documentation](https://tom-kb.github.io/TailorMade/annotated.html), generated with Doxygen.  
