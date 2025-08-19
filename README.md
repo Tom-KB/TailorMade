@@ -210,7 +210,7 @@ void TestSystem::run() {
 	}
 }
 ```
-You can precise the criteria of your system, see [System](https://tom-kb.github.io/TailorMade/class_system.html) for more details on these methods.
+You can precise the criteria of your system, see [System](https://tom-kb.github.io/TailorMade/class_system.html) for more details on these methods.  
 It will **automatically** update your entities list according to these **criteria**, if you let the *autoUpdate* parameter of the System's class to *true*.
 
 ## Contributing
