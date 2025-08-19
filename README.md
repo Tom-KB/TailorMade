@@ -192,7 +192,26 @@ environment->addManager(managerA); // Manager added to the environment
 environment->createEntity("EntityA");
 ```
 
-###
+### Systems
+A system can be created by deriving the **System** class and implementing its *run()* method :
+```cpp
+TestSystem::TestSystem(shared_ptr<Environment> environment) : System(environment) {
+  // All the possible methods to precise the system's criteria on entities.
+	//this->addComponent("Tilemap");
+	this->addComponents({ "Drag", "Transform", "Tilemap"});
+	//this->addRejected("Camera");
+	//this->addRejects({ "GameAI", "Shape" });
+	//this->addTag("NPC");
+}
+
+void TestSystem::run() {
+	for (auto& entity : entities) {
+		cout << environment->getName(entity) << endl;
+	}
+}
+```
+You can precise the criteria of your system, see [System](https://tom-kb.github.io/TailorMade/class_system.html) for more details on these methods.
+It will **automatically** update your entities list according to these **criteria**, if you let the *autoUpdate* parameter of the System's class to *true*.
 
 ## Contributing
 Contributions are more than welcome.  
