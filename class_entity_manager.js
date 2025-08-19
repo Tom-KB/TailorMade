@@ -1,5 +1,6 @@
 var class_entity_manager =
 [
+    [ "EntityManager", "class_entity_manager.html#a7555637657d090171be6ceee8451de0a", null ],
     [ "EntityManager", "class_entity_manager.html#abcb7a9f6dbf6c1a2ac475cf2dd4823fe", null ],
     [ "addTag", "class_entity_manager.html#a06175bed207fa8f2072dfff80ac71782", null ],
     [ "createEntity", "class_entity_manager.html#aeba48fd06ec4d887ab487656de77f1dc", null ],

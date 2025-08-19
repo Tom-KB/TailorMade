@@ -35,7 +35,7 @@
   <td id="projectalign">
    <div id="projectname">TailorMade<span id="projectnumber">&#160;2.0</span>
    </div>
-   <div id="projectbrief">Tailor Made is a high-performance ECS library with on-the-fly entity creation and JSON-based definitions for entities, components, and their relationships. It supports snapshots for saving and reloading, powerful entity tagging, and custom types that simplify your workflow, delivering organized, flexible, and efficient project management.</div>
+   <div id="projectbrief">Tailor Made is a high-performance C++20 ECS library with on-the-fly entity creation and JSON-based definitions for entities, components, and their relationships.</div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -112,14 +112,15 @@ $(function(){initNavTree('class_entity_manager.html',''); initResizable(true); }
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a06175bed207fa8f2072dfff80ac71782">addTag</a>(int entity, const std::string &amp;tag)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#aeba48fd06ec4d887ab487656de77f1dc">createEntity</a>(const std::string &amp;name, bool createFile=false)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#abcb7a9f6dbf6c1a2ac475cf2dd4823fe">EntityManager</a>(const std::string &amp;directory)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#a9e54b5900de49b09bdfa74c0398db38c">getEntities</a>(const std::string &amp;prefixOrTag, bool isPrefix=true)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a8194660c946fa47d88ae335927a0bbfb">getEntity</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#a41ecf2db9300c48b6a36f2d60e9c67e5">getName</a>(int entity)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#aeba3a96a48869feae2b99bfa645f3daf">getNames</a>()</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#a8ae9aecae6d4099200160539a3818a6e">hasTag</a>(int entity, const std::string &amp;tag)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a706460fc8fb0219ca0e0c43dc8261869">removeEntity</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#aa1a2379955c44fba5583a5ea7fd82a85">toString</a>(std::ostream &amp;stream)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a7555637657d090171be6ceee8451de0a">EntityManager</a>()</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#abcb7a9f6dbf6c1a2ac475cf2dd4823fe">EntityManager</a>(const std::string &amp;directory)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a9e54b5900de49b09bdfa74c0398db38c">getEntities</a>(const std::string &amp;prefixOrTag, bool isPrefix=true)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#a8194660c946fa47d88ae335927a0bbfb">getEntity</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a41ecf2db9300c48b6a36f2d60e9c67e5">getName</a>(int entity)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#aeba3a96a48869feae2b99bfa645f3daf">getNames</a>()</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#a8ae9aecae6d4099200160539a3818a6e">hasTag</a>(int entity, const std::string &amp;tag)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="class_entity_manager.html#a706460fc8fb0219ca0e0c43dc8261869">removeEntity</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_entity_manager.html#aa1a2379955c44fba5583a5ea7fd82a85">toString</a>(std::ostream &amp;stream)</td><td class="entry"><a class="el" href="class_entity_manager.html">EntityManager</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
