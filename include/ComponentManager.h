@@ -85,8 +85,9 @@ public:
     /**
      * @brief Return true if the given entity possess this component, false otherwise.
      * @param entity The ID of the entity.
+     * @param bypassState Tells if we should bypass the state value in the hasEntity operator.
      */
-    bool hasEntity(int entity);
+    bool hasEntity(int entity, bool bypassState = false);
     
     /**
      * @brief Return the actual state of the given entity's component, true or false.

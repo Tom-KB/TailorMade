@@ -64,9 +64,9 @@ shared_ptr<Component> ComponentManager::getComponent(int entity) {
 	return mapEC[entity].first;
 }
 
-bool ComponentManager::hasEntity(int entity) {
+bool ComponentManager::hasEntity(int entity, bool bypassState) {
 	scoped_lock lock(mtx);
-	return mapEC.contains(entity) && mapEC[entity].second; // Return false if the state is false.
+	return mapEC.contains(entity) && (mapEC[entity].second || bypassState); // Return false if the state is false.
 }
 
 bool ComponentManager::getState(int entity) {

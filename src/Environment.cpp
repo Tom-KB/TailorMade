@@ -55,7 +55,7 @@ void Environment::setEntityState(const string& name, bool state, bool share) {
 
 void Environment::setEntityState(int entity, bool state, bool share) {
 	for (const auto& [_, value] : mapNC) {
-		if (value->hasEntity(entity)) value->setState(entity, state);
+		if (value->hasEntity(entity, true)) value->setState(entity, state);
 	}
 	
 	if (share) notify(entity);
@@ -70,7 +70,7 @@ void Environment::setEntitiesState(const string& prefixOrTag, bool state, bool s
 }
 
 void Environment::setState(int entity, const string& compName, bool state, bool share) {
-	if (!mapNC.contains(compName) || !mapNC[compName]->hasEntity(entity)) return;
+	if (!mapNC.contains(compName) || !mapNC[compName]->hasEntity(entity, true)) return;
 
 	mapNC[compName]->setState(entity, state);
 
@@ -122,7 +122,7 @@ void Environment::removeEntity(const string& name, bool share) {
 	entityManager->removeEntity(name);
 
 	for (const auto& [key, value] : mapNC) {
-		if (value->hasEntity(ID)) {
+		if (value->hasEntity(ID, true)) {
 			value->unsubscribe(ID);
 		}
 	}
@@ -221,14 +221,14 @@ int Environment::copy(const string& original, const string& copy, bool createFil
 	int ID = entityManager->getEntity(original);
 
 	for (const auto& [_, value] : mapNC) {
-		if (value->hasEntity(ID)) value->give(ID, newEntity, true);
+		if (value->hasEntity(ID, true)) value->give(ID, newEntity, true);
 	}
 	if (share) notify(newEntity);
 	return newEntity;
 }
 
 void Environment::give(const string& component, int giver, int receiver, bool copy, bool share) {
-	if (!mapNC.contains(component) || !mapNC[component]->hasEntity(giver)) return;
+	if (!mapNC.contains(component) || !mapNC[component]->hasEntity(giver, true)) return;
 
 	mapNC[component]->give(giver, receiver, copy);
 
@@ -292,7 +292,7 @@ void Environment::loadSnapshot(const string& snapshotName) {
 			for (const auto& [name, data] : snapshot.entities[key]) {
 				if (mapNC.contains(name)) {
 					shared_ptr<ComponentManager> compManager = mapNC[name];
-					if (compManager->hasEntity(ID)) {
+					if (compManager->hasEntity(ID, true)) {
 						shared_ptr<Component> component = compManager->getComponent(ID);
 
 						for (const auto& [key, value] : data) {
