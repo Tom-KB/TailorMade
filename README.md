@@ -27,7 +27,7 @@ Here’s a list of what TailorMade offers:
 
 ## Architecture
 Here is the class diagram I designed and used to build this project :
-<img width="2807" height="1638" alt="image" src="https://github.com/user-attachments/assets/0c0590e7-7097-4a4c-8bef-c820fd1f28a6" />
+<img width="2806" height="1636" alt="image" src="https://github.com/user-attachments/assets/c0b3abc0-72fb-40b5-94fb-ac5abf02b0e5" />
 **NB**: There are some differences between this diagram and the final implementation.  
 During development, I made a few *implementation choices* that aren’t reflected in the diagram.
 
