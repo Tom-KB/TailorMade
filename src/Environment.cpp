@@ -38,7 +38,7 @@ std::vector<std::shared_ptr<ComponentManager>> Environment::getManagers() {
 }
 
 shared_ptr<ComponentManager> Environment::getManager(const string& name) {
-	if (!mapNC.contains(name)) {
+	if (mapNC.contains(name)) {
 		return mapNC[name];
 	}
 	return nullptr;

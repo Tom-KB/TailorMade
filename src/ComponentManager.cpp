@@ -49,7 +49,7 @@ vector<int> ComponentManager::getEntities(bool checkState) {
 	vector<int> subscribedEntities;
 
 	// We gathered all the keys of the mapEC
-	if (mapEC.empty()) {
+	if (!mapEC.empty()) {
 		for (const auto& [key, _] : mapEC) {
 			if (mapEC[key].second || checkState) subscribedEntities.push_back(key); // Append the key according to checkState
 		}
