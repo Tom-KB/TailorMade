@@ -45,12 +45,12 @@ typedef struct Vector2 { float x; float y;
     }
 
     /// Scalar product
-    Vector2 operator*=(const float s) const {
+    Vector2 operator*(const float s) const {
         return { x * s, y * s };
     }
 
     /// Scalar division
-    Vector2 operator/=(const float s) const {
+    Vector2 operator/(const float s) const {
         return { x / s, y / s };
     }
 
@@ -77,7 +77,7 @@ typedef struct Vector2 { float x; float y;
         float norm2 = !v2;
         norm2 *= norm2; // Squared the norm
         float dotProd = (*this) * v2;
-        return (*this) *= (dotProd / norm2);
+        return (*this) * (dotProd / norm2);
     }
 } Vector2;
 
@@ -100,12 +100,12 @@ typedef struct Vector3 { float x; float y; float z;
     }
 
     /// Scalar product
-    Vector3 operator*=(const float s) const {
+    Vector3 operator*(const float s) const {
         return { x * s, y * s, z * s };
     }
     
     /// Scalar division
-    Vector3 operator/=(const float s) const {
+    Vector3 operator/(const float s) const {
         return { x / s, y / s, z / s };
     }
 
@@ -137,7 +137,7 @@ typedef struct Vector3 { float x; float y; float z;
         float norm2 = !v2;
         norm2 *= norm2; // Squared the norm
         float dotProd = (*this) * v2;
-        return (*this) *= (dotProd / norm2);
+        return (*this) * (dotProd / norm2);
     }
 } Vector3;
 
