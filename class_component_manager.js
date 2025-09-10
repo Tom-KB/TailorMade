@@ -8,7 +8,7 @@ var class_component_manager =
     [ "getState", "class_component_manager.html#aa60325b2528f4ce89a657db427215ca6", null ],
     [ "getType", "class_component_manager.html#a4c5e65b230dfaac185a3980a2d6b09b3", null ],
     [ "give", "class_component_manager.html#a7cfb94a0039e738eb3c0bd3d9177f01c", null ],
-    [ "hasEntity", "class_component_manager.html#a7b2e10efeb7995f8e1b3592bf5c76a34", null ],
+    [ "hasEntity", "class_component_manager.html#a9cb2b94a2ef4edecea38eb860e1b0957", null ],
     [ "setState", "class_component_manager.html#ae5b4cb514be16902e655f9be759bf384", null ],
     [ "subscribe", "class_component_manager.html#a450fe110ad6378bbc52dabbf9a3319ea", null ],
     [ "subscribe", "class_component_manager.html#a706fe1f3fbe443688d8c89626aeef172", null ],

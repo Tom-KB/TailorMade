@@ -2,11 +2,11 @@ var struct_vector3 =
 [
     [ "operator!", "struct_vector3.html#ad130213ebe65b61ba350ca0397510f65", null ],
     [ "operator%", "struct_vector3.html#a666d453ac2f336dd2be6f14214cccb51", null ],
+    [ "operator*", "struct_vector3.html#a1a7d2e583546ef119a4b3f140b340b1e", null ],
     [ "operator*", "struct_vector3.html#a1f033be59020392b08acde77c61a3ee2", null ],
-    [ "operator*=", "struct_vector3.html#adb28e66aa2fd724a1b381e5a6811247e", null ],
     [ "operator+", "struct_vector3.html#a399682ff7b7da1e512cdcf54fba3e9aa", null ],
     [ "operator-", "struct_vector3.html#aa18cf9fab67a56f9b84f58c74667167f", null ],
-    [ "operator/=", "struct_vector3.html#a29a972d09093af5214b9ec1ec6ccf304", null ],
+    [ "operator/", "struct_vector3.html#af29416def4b598fd9579745b29a9ac7f", null ],
     [ "operator>>", "struct_vector3.html#a94fb21fb6d6921bdd818d04d5b91544d", null ],
     [ "operator^", "struct_vector3.html#a46cff9aead15b94aef900e3d73aeac2a", null ],
     [ "operator~", "struct_vector3.html#af1de5eff4d6c06deba4ebd76e36a8781", null ],
