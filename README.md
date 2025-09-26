@@ -61,7 +61,7 @@ Secondly, you could tell the EntityManager that you want to make multiple copies
     "generate" : 50,
 }
 ```
-It will create 50 entities with their name being **ObjectX** with X ranging from 1 to 50 (included).  
+It will create 50 entities with their name being **ObjectX** with X ranging from 0 to 49 (included).  
 Lastly, you could define multiple entities in a single file : 
 ```cpp
 {
