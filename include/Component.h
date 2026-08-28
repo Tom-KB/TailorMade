@@ -127,17 +127,16 @@ private:
 template<typename Type>
 inline Type Component::get(const std::string& name) {
     std::scoped_lock lock(mtx);
+    if (!dataMap.contains(name)) {
+        std::cerr << "Component \"" << componentName << "\" : no data named \"" << name << "\"." << std::endl;
+        return Type{};
+    }
     try {
-        if (!dataMap.contains(name)) {
-            // No data with this name
-            throw std::runtime_error("Error : no data with the name \"" + name + "\".");
-        }
-
-        std::variant<ECS_Types> data = dataMap[name].second;
-        return std::get<Type>(data); // Be careful of bad conversion here
+        return std::get<Type>(dataMap[name].second); // Be careful of bad conversion here.
     }
     catch (std::exception& e) {
-        std::cerr << "Component : " << e.what() << std::endl;
+        std::cerr << "Component \"" << componentName << "\" : data \"" << name << "\" holds a \""
+            << dataMap[name].first << "\", which cannot be read as the requested type." << std::endl;
         return Type{};
     }
 }
@@ -145,16 +144,15 @@ inline Type Component::get(const std::string& name) {
 template<typename Type>
 inline void Component::set(const std::string& name, Type value) {
     std::scoped_lock lock(mtx);
+    if (!dataMap.contains(name)) {
+        std::cerr << "Component \"" << componentName << "\" : no data named \"" << name << "\"." << std::endl;
+        return;
+    }
     try {
-        if (!dataMap.contains(name)) {
-            //No data with this name
-            throw std::runtime_error("Error : no data with the name \"" + name + "\".");
-        }
-        dataMap[name].second = value;
+        dataMap[name].second = value; // Be careful, an implicit cast towards an incompatible type (e.g. Vector3 -> integer) will fail here.
     }
     catch (std::exception& e) {
-        std::cerr << "Component : " << e.what() << std::endl; // Be careful, some values will throw an error if you try to implicit cast towards them.
-        // For example, Vector3 ---> integer won't work.
+        std::cerr << "Component \"" << componentName << "\" : could not set data \"" << name << "\" : " << e.what() << std::endl;
     }
 }
 

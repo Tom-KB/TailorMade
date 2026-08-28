@@ -9,12 +9,23 @@ Subscription::Subscription(const string& directory, shared_ptr<EntityManager> en
 	for (const auto& file : files) {
 		ifstream subsFile(file);
 
-		nlohmann::json subsJSON = nlohmann::json::parse(subsFile);
+		nlohmann::json subsJSON;
+		try {
+			subsJSON = nlohmann::json::parse(subsFile);
+		}
+		catch (const exception& e) {
+			cerr << "Subscription : cannot parse the subscription file \"" << file << "\" : " << e.what() << endl;
+			continue;
+		}
 
 		if (!subsJSON.contains("generated") && subsJSON.contains("entity")) {
 			entitiesFP[subsJSON["entity"]] = file;
 			// We skipped subscriptions for unknown entities
-			if (entityManager->getEntity(subsJSON["entity"]) == -1) continue;
+			if (entityManager->getEntity(subsJSON["entity"]) == -1) {
+				cerr << "Subscription (" << file << ") : unknown entity \"" << string(subsJSON["entity"])
+					<< "\", this subscription is skipped." << endl;
+				continue;
+			}
 		}
 
 		vector<int> IDs;
@@ -43,18 +54,37 @@ Subscription::Subscription(const string& directory, shared_ptr<EntityManager> en
 
 		if (subsJSON.contains("state")) defaultState = subsJSON["state"];
 
+		string entityLabel = subsJSON.contains("entity") ? string(subsJSON["entity"]) : string("<tags>");
 		nlohmann::json components = subsJSON["components"];
 		for (const auto& component : components) {
 			string name = component["name"];
 
-			if (!managers->contains(name)) continue; // Skip the unknown components.
+			if (!managers->contains(name)) {
+				// Skip the unknown components, but say which one and where : a component that was
+				// never loaded silently dropped every value the file gave it.
+				cerr << "Subscription (" << file << ") : component \"" << name << "\" is not loaded, its data for \""
+					<< entityLabel << "\" is skipped." << endl;
+				continue;
+			}
 
 			shared_ptr<ComponentManager> compManager = managers->at(name);
 
 			dataVector data;
 
 			for (const auto& [key, value] : component["data"].items()) {
-				data.push_back({ key, valueToType(value, compManager->getType(key)) });
+				const string& type = compManager->getType(key);
+				if (type.empty()) {
+					cerr << "Subscription (" << file << ") : component \"" << name << "\" has no field \"" << key
+						<< "\", this value is ignored." << endl;
+					continue;
+				}
+				try {
+					data.push_back({ key, valueToType(value, type) });
+				}
+				catch (const exception& e) {
+					cerr << "Subscription (" << file << ") : component \"" << name << "\", field \"" << key
+						<< "\" (" << type << ") : " << e.what() << endl;
+				}
 			}
 
 			for (const auto& entity : IDs) {

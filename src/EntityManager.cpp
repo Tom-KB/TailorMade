@@ -3,10 +3,10 @@
 
 using namespace std;
 
-EntityManager::EntityManager() : directory(directory), count(-1), placeholder("") {
+EntityManager::EntityManager() : count(-1), placeholder("") {
 }
 
-EntityManager::EntityManager(const string& directory) : directory(directory), count(-1), placeholder("") {
+EntityManager::EntityManager(const string& directory) : count(-1), directory(directory), placeholder("") {
 
 	vector<string> files = getAllFilesFromDirectory(directory); // Return every files in the directory's folder and its sub-folders
 
@@ -17,7 +17,15 @@ EntityManager::EntityManager(const string& directory) : directory(directory), co
 			throw runtime_error("Error : Can't read the file \"" + file + "\"");
 		}
 
-		nlohmann::json entityJSON = nlohmann::json::parse(entityFile); // Parse the JSON of the entity's file
+		nlohmann::json entityJSON;
+		try {
+			entityJSON = nlohmann::json::parse(entityFile); // Parse the JSON of the entity's file
+		}
+		catch (const exception& e) {
+			cerr << "EntityManager : cannot parse the entity file \"" << file << "\" : " << e.what() << endl;
+			continue;
+		}
+
 		vector<string> namesVector;
 		if (entityJSON.contains("name")) {
 			namesVector.push_back(entityJSON["name"]);
@@ -26,6 +34,8 @@ EntityManager::EntityManager(const string& directory) : directory(directory), co
 			namesVector = entityJSON["names"];
 		}
 		else {
+			cerr << "EntityManager : the entity file \"" << file
+				<< "\" has neither a \"name\" nor a \"names\" field, it is ignored." << endl;
 			continue;
 		}
 
@@ -127,16 +137,23 @@ int EntityManager::createEntity(const string& name, bool createFile) {
 			ofstream newEntityFile(directory + "/" + name + ".json");
 			newEntityFile << newEntityJSON.dump(4);
 		}
+		int ID;
 		if (!availableIDs.empty()) {
-			entities.insert({ name, availableIDs.front() });
-			names[availableIDs.front()] = name;
+			ID = availableIDs.front();
 			availableIDs.pop(); // Removed the newly used IDs.
+			names[ID] = name;
+			// Hand out a clean slot : clear the ID from every ComponentManager, even if it was
+			// freed through a path that did not already run the recycle handler.
+			if (recycleHandler) recycleHandler(ID);
 		}
 		else {
+			ID = ++count;
 			names.push_back(name);
-			entities.insert({ name, ++count });
 		}
-		return count;
+		entities.insert({ name, ID });
+		// Return the ID the entity actually got : it only equals count when no removed ID was
+		// reused, so returning count meant every use of the result hit the highest entity instead.
+		return ID;
 	}
 	return -1; // No entity created.
 }
@@ -152,8 +169,16 @@ void EntityManager::removeEntity(const string& name) {
 		if (value.contains(ID)) tags[key].erase(ID);
 	}
 
+	// Name removal : the slot is free, getName must not keep returning the old name.
+	if (ID >= 0 && ID < static_cast<int>(names.size())) names[ID].clear();
+
 	// Map of entities removal.
 	entities.erase(name);
+
+	// The EntityManager cannot reach the ComponentManagers, so let the Environment clear this ID
+	// from every component. Without it a direct call here leaves the components subscribed and the
+	// next entity to reuse the ID inherits them.
+	if (recycleHandler) recycleHandler(ID);
 }
 
 void EntityManager::toString(ostream& stream) {
@@ -187,6 +212,18 @@ bool EntityManager::hasTag(int entity, const string& tag) {
 	return false;
 }
 
+vector<string> EntityManager::getTags(int entity) {
+	vector<string> result;
+	for (const auto& [tag, holders] : tags) {
+		if (holders.contains(entity)) result.push_back(tag);
+	}
+	return result;
+}
+
 void EntityManager::addTag(int entity, const string& tag) {
 	tags[tag].insert(entity);
+}
+
+void EntityManager::setRecycleHandler(function<void(int)> handler) {
+	recycleHandler = move(handler);
 }

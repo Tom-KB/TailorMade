@@ -10,6 +10,7 @@
 
 #include <queue>
 #include <unordered_set>
+#include <functional>
 #include <TM_Tools.h>
 
  /**
@@ -63,6 +64,7 @@ public:
     /**
      * @brief Create a new entity and return its ID.
      * @details If createFile is true, the entity's file will be create in the root directory.
+     * @details The returned ID is the one the new entity actually got, which may be a recycled ID from a previously removed entity.
      * @param name Entity's name.
      * @param createFile If true, an entity's file is created in the root directory.
      */
@@ -70,10 +72,22 @@ public:
 
     /**
      * @brief Remove an entity from the EntityManager.
+     * @details Runs the recycle handler (see setRecycleHandler) so the Environment can unsubscribe the ID from every component.
      * @warning The removed entity's ID will be reused.
      * @param name Entity's name.
      */
     void removeEntity(const std::string& name);
+
+    /**
+     * @brief Register a handler called with an entity's ID when that ID is released or recycled.
+     * @details The EntityManager only tracks names, IDs and tags ; it cannot unsubscribe an entity
+     *          from the ComponentManagers by itself. The Environment sets this handler so that a
+     *          released ID is cleared from every component whichever code path frees it (including a
+     *          direct call to removeEntity), and so that a recycled ID is always handed out clean.
+     * @details The handler runs once in removeEntity, and again in createEntity when the ID is reused.
+     * @param handler The function to call with the released/recycled ID ; pass nullptr to clear it.
+     */
+    void setRecycleHandler(std::function<void(int)> handler);
     
     /**
      * @brief Append a serialized version of the EntityManager to the given stream. 
@@ -88,6 +102,13 @@ public:
      * @param tag The tag to search for.
      */
     bool hasTag(int entity, const std::string& tag);
+
+    /**
+     * @brief Return every tag carried by an entity.
+     * @details The counterpart of hasTag, for when the tags are not known in advance (e.g. when copying an entity).
+     * @param entity The ID of the entity.
+     */
+    std::vector<std::string> getTags(int entity);
 
     /**
      * @brief Add a tag to an entity.
@@ -135,6 +156,12 @@ private:
      * Store the tags of an entity.
      */
     std::unordered_map<std::string, std::unordered_set<int>> tags;
+
+    /**
+     * Handler called with an entity's ID when it is released by removeEntity or reused by
+     * createEntity. Set by the Environment to unsubscribe the ID from every ComponentManager.
+     */
+    std::function<void(int)> recycleHandler;
 };
 
 #endif //_ENTITYMANAGER_H

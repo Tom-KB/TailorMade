@@ -3,7 +3,7 @@
 using namespace std;
 
 Environment::Environment(shared_ptr<EntityManager> entityManager) : entityManager(entityManager), subscription(nullptr) {
-
+	attachRecycleHandler();
 }
 
 Environment::Environment(const string& entitiesPath, const string& componentsPath, const string& subscriptionsPath) {
@@ -21,6 +21,20 @@ Environment::Environment(const string& entitiesPath, const string& componentsPat
 	catch (exception& e) {
 		cerr << "Environment : " << e.what() << endl;
 	}
+
+	if (entityManager) attachRecycleHandler();
+}
+
+Environment::~Environment() {
+	if (entityManager) entityManager->setRecycleHandler(nullptr);
+}
+
+void Environment::attachRecycleHandler() {
+	entityManager->setRecycleHandler([this](int id) {
+		for (const auto& [_, manager] : mapNC) {
+			manager->unsubscribe(id);
+		}
+	});
 }
 
 void Environment::addManager(shared_ptr<ComponentManager> manager) {
@@ -117,15 +131,10 @@ int Environment::createEntity(const string& name, bool createFile, bool share) {
 }
 
 void Environment::removeEntity(const string& name, bool share) {
-	// Use EM remove and loop trough every CMs to unsubscribe the entity.
+	// entityManager->removeEntity runs the recycle handler set in attachRecycleHandler, which
+	// unsubscribes the ID from every ComponentManager.
 	int ID = entityManager->getEntity(name);
 	entityManager->removeEntity(name);
-
-	for (const auto& [key, value] : mapNC) {
-		if (value->hasEntity(ID, true)) {
-			value->unsubscribe(ID);
-		}
-	}
 
 	if (share) notify(ID);
 }
@@ -147,7 +156,13 @@ vector<shared_ptr<Component>> Environment::getComponents(const string& name) {
 
 shared_ptr<Component> Environment::getComponent(int entity, const string& name) {
 	if (mapNC.contains(name) && mapNC[name]->hasEntity(entity)) return mapNC[name]->getComponent(entity);
-	throw runtime_error("Error : The component \"" + name + "\" is not attached to \"" + entityManager->getName(entity) + "\".");
+
+	const string& entityName = entityManager->getName(entity);
+	const string who = entityName.empty() ? "entity #" + to_string(entity) : "\"" + entityName + "\"";
+	if (!mapNC.contains(name)) {
+		throw runtime_error("Error : no component named \"" + name + "\" is loaded (requested for " + who + ").");
+	}
+	throw runtime_error("Error : the component \"" + name + "\" is not attached to " + who + ".");
 }
 
 shared_ptr<Component> Environment::getComponent(const string& entityName, const string& name) {
@@ -217,11 +232,18 @@ void Environment::notify(size_t ID) {
 }
 
 int Environment::copy(const string& original, const string& copy, bool createFile, bool share) {
-	int newEntity = this->createEntity(copy, createFile, false);
+	// Resolve the original before createEntity touches the manager, otherwise a reused ID
+	// could make us read the wrong entity.
 	int ID = entityManager->getEntity(original);
+	int newEntity = this->createEntity(copy, createFile, false);
 
 	for (const auto& [_, value] : mapNC) {
 		if (value->hasEntity(ID, true)) value->give(ID, newEntity, true);
+	}
+	// Carry the tags too : a system gathers its entities by tag, so a copy without them holds
+	// every component of the original and is still never seen.
+	for (const string& tag : entityManager->getTags(ID)) {
+		entityManager->addTag(newEntity, tag);
 	}
 	if (share) notify(newEntity);
 	return newEntity;

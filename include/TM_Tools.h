@@ -299,7 +299,7 @@ inline std::vector<std::string> getAllFilesFromDirectory(const std::string& dire
         }
     }
     catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "TM_Tools : cannot list the files in directory \"" << directory << "\" : " << e.what() << std::endl;
     }
 
     return result;
