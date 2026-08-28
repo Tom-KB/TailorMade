@@ -63,6 +63,7 @@ public:
     /**
      * @brief Create a new entity and return its ID.
      * @details If createFile is true, the entity's file will be create in the root directory.
+     * @details The returned ID is the one the new entity actually got, which may be a recycled ID from a previously removed entity.
      * @param name Entity's name.
      * @param createFile If true, an entity's file is created in the root directory.
      */
@@ -88,6 +89,13 @@ public:
      * @param tag The tag to search for.
      */
     bool hasTag(int entity, const std::string& tag);
+
+    /**
+     * @brief Return every tag carried by an entity.
+     * @details The counterpart of hasTag, for when the tags are not known in advance (e.g. when copying an entity).
+     * @param entity The ID of the entity.
+     */
+    std::vector<std::string> getTags(int entity);
 
     /**
      * @brief Add a tag to an entity.

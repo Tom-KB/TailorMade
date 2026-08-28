@@ -88,8 +88,15 @@ void ComponentManager::setState(int entity, bool newState) {
 void ComponentManager::give(int giver, int receiver, bool copy) {
 	scoped_lock lock(mtx);
 	if (!mapEC.contains(giver)) return; // Giver do not exist, do nothing.
-	mapEC[receiver] = mapEC[giver]; // Set both the component and state to the receiver.
-	if (!copy) {
+	if (copy) {
+		// A copy is a component of its own holding the same values. Handing the receiver the
+		// giver's own component left the two entities sharing it, so editing one edited both.
+		shared_ptr<Component> component = make_shared<Component>();
+		component->copy(mapEC[giver].first);
+		mapEC[receiver] = { component, mapEC[giver].second }; // Same values, same state, distinct component.
+	}
+	else {
+		mapEC[receiver] = mapEC[giver]; // Hand over the component and state to the receiver.
 		mapEC.erase(giver); // Erase the giver if its not a copy.
 	}
 }

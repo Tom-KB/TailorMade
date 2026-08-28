@@ -281,6 +281,7 @@ public:
     /**
      * @brief Let you create a new entity, which is a perfect copy of the original.
      * @details The new entity will have the name "copy" and its ID is returned.
+     * @details The components (with their values and states) and the tags of the original are carried over to the copy.
      * @param original The name of the original entity.
      * @param copy The desired name for the copy.
      * @param createFile If true, an entity's file is created in the root directory.
@@ -290,10 +291,11 @@ public:
     
     /**
      * @brief Give the ownership, or make a copy, of an entity's component to another component.
+     * @details When copy is true the receiver gets its own component holding the same values and state ; the two entities never share a component.
      * @param component Name of the component to give.
      * @param giver The ID of the entity which give its component.
      * @param receiver The ID of the entity which take the component.
-     * @param copy If true the component is just copied, otherwise the giver doesn't have the component anymore.
+     * @param copy If true the component is copied, otherwise the giver doesn't have the component anymore.
      * @param share Tells the method if you want the update to be shared to the systems. (default : true)
      */
     void give(const std::string& component, int giver, int receiver, bool copy, bool share = true);

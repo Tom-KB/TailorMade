@@ -103,10 +103,11 @@ public:
     void setState(int entity, bool newState);
     
     /**
-     * @brief Give the ownership, or make a copy, of an entity's component to another component. 
+     * @brief Give the ownership, or make a copy, of an entity's component to another component.
+     * @details When copy is true the receiver gets its own component holding the same values and state ; the two entities never share a component.
      * @param giver The ID of the entity which give its component.
      * @param receiver The ID of the entity which take the component.
-     * @param copy If true the component is just copied, otherwise the giver doesn't have the component anymore.
+     * @param copy If true the component is copied, otherwise the giver doesn't have the component anymore.
      */
     void give(int giver, int receiver, bool copy);
     

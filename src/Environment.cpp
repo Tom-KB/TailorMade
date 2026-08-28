@@ -217,11 +217,18 @@ void Environment::notify(size_t ID) {
 }
 
 int Environment::copy(const string& original, const string& copy, bool createFile, bool share) {
-	int newEntity = this->createEntity(copy, createFile, false);
+	// Resolve the original before createEntity touches the manager, otherwise a reused ID
+	// could make us read the wrong entity.
 	int ID = entityManager->getEntity(original);
+	int newEntity = this->createEntity(copy, createFile, false);
 
 	for (const auto& [_, value] : mapNC) {
 		if (value->hasEntity(ID, true)) value->give(ID, newEntity, true);
+	}
+	// Carry the tags too : a system gathers its entities by tag, so a copy without them holds
+	// every component of the original and is still never seen.
+	for (const string& tag : entityManager->getTags(ID)) {
+		entityManager->addTag(newEntity, tag);
 	}
 	if (share) notify(newEntity);
 	return newEntity;

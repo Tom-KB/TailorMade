@@ -127,16 +127,20 @@ int EntityManager::createEntity(const string& name, bool createFile) {
 			ofstream newEntityFile(directory + "/" + name + ".json");
 			newEntityFile << newEntityJSON.dump(4);
 		}
+		int ID;
 		if (!availableIDs.empty()) {
-			entities.insert({ name, availableIDs.front() });
-			names[availableIDs.front()] = name;
+			ID = availableIDs.front();
 			availableIDs.pop(); // Removed the newly used IDs.
+			names[ID] = name;
 		}
 		else {
+			ID = ++count;
 			names.push_back(name);
-			entities.insert({ name, ++count });
 		}
-		return count;
+		entities.insert({ name, ID });
+		// Return the ID the entity actually got : it only equals count when no removed ID was
+		// reused, so returning count meant every use of the result hit the highest entity instead.
+		return ID;
 	}
 	return -1; // No entity created.
 }
@@ -185,6 +189,14 @@ bool EntityManager::hasTag(int entity, const string& tag) {
 		return tags[tag].contains(entity);
 	}
 	return false;
+}
+
+vector<string> EntityManager::getTags(int entity) {
+	vector<string> result;
+	for (const auto& [tag, holders] : tags) {
+		if (holders.contains(entity)) result.push_back(tag);
+	}
+	return result;
 }
 
 void EntityManager::addTag(int entity, const string& tag) {
