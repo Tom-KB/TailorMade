@@ -3,10 +3,10 @@
 
 using namespace std;
 
-EntityManager::EntityManager() : directory(directory), count(-1), placeholder("") {
+EntityManager::EntityManager() : count(-1), placeholder("") {
 }
 
-EntityManager::EntityManager(const string& directory) : directory(directory), count(-1), placeholder("") {
+EntityManager::EntityManager(const string& directory) : count(-1), directory(directory), placeholder("") {
 
 	vector<string> files = getAllFilesFromDirectory(directory); // Return every files in the directory's folder and its sub-folders
 
