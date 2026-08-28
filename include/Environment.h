@@ -48,7 +48,12 @@ public:
      * @param subscriptionsPath The subscriptions' root directory.
      */
     Environment(const std::string& entitiesPath, const std::string& componentsPath, const std::string& subscriptionsPath);
-    
+
+    /**
+     * @brief Destructor, detaches the recycle handler this Environment registered on the EntityManager.
+     */
+    ~Environment();
+
     /**
      * @brief Let you add a ComponentManager from the environment interface.
      * @param manager A shared_ptr towards the ComponentManagers which will be added to the environment.
@@ -323,7 +328,13 @@ public:
      */
     void clearSnapshot(const std::string& snapshotName);
 
-private: 
+private:
+    /**
+     * @brief Register on the EntityManager a handler that unsubscribes a released or recycled ID from every ComponentManager.
+     * @details One Environment drives one EntityManager : a second Environment sharing it would replace this handler.
+     */
+    void attachRecycleHandler();
+
     /**
      * Link the ComponentManagers to their names.
      */

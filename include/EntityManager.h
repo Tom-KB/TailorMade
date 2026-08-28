@@ -10,6 +10,7 @@
 
 #include <queue>
 #include <unordered_set>
+#include <functional>
 #include <TM_Tools.h>
 
  /**
@@ -71,10 +72,22 @@ public:
 
     /**
      * @brief Remove an entity from the EntityManager.
+     * @details Runs the recycle handler (see setRecycleHandler) so the Environment can unsubscribe the ID from every component.
      * @warning The removed entity's ID will be reused.
      * @param name Entity's name.
      */
     void removeEntity(const std::string& name);
+
+    /**
+     * @brief Register a handler called with an entity's ID when that ID is released or recycled.
+     * @details The EntityManager only tracks names, IDs and tags ; it cannot unsubscribe an entity
+     *          from the ComponentManagers by itself. The Environment sets this handler so that a
+     *          released ID is cleared from every component whichever code path frees it (including a
+     *          direct call to removeEntity), and so that a recycled ID is always handed out clean.
+     * @details The handler runs once in removeEntity, and again in createEntity when the ID is reused.
+     * @param handler The function to call with the released/recycled ID ; pass nullptr to clear it.
+     */
+    void setRecycleHandler(std::function<void(int)> handler);
     
     /**
      * @brief Append a serialized version of the EntityManager to the given stream. 
@@ -143,6 +156,12 @@ private:
      * Store the tags of an entity.
      */
     std::unordered_map<std::string, std::unordered_set<int>> tags;
+
+    /**
+     * Handler called with an entity's ID when it is released by removeEntity or reused by
+     * createEntity. Set by the Environment to unsubscribe the ID from every ComponentManager.
+     */
+    std::function<void(int)> recycleHandler;
 };
 
 #endif //_ENTITYMANAGER_H

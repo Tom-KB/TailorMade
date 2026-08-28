@@ -142,6 +142,9 @@ int EntityManager::createEntity(const string& name, bool createFile) {
 			ID = availableIDs.front();
 			availableIDs.pop(); // Removed the newly used IDs.
 			names[ID] = name;
+			// Hand out a clean slot : clear the ID from every ComponentManager, even if it was
+			// freed through a path that did not already run the recycle handler.
+			if (recycleHandler) recycleHandler(ID);
 		}
 		else {
 			ID = ++count;
@@ -166,8 +169,16 @@ void EntityManager::removeEntity(const string& name) {
 		if (value.contains(ID)) tags[key].erase(ID);
 	}
 
+	// Name removal : the slot is free, getName must not keep returning the old name.
+	if (ID >= 0 && ID < static_cast<int>(names.size())) names[ID].clear();
+
 	// Map of entities removal.
 	entities.erase(name);
+
+	// The EntityManager cannot reach the ComponentManagers, so let the Environment clear this ID
+	// from every component. Without it a direct call here leaves the components subscribed and the
+	// next entity to reuse the ID inherits them.
+	if (recycleHandler) recycleHandler(ID);
 }
 
 void EntityManager::toString(ostream& stream) {
@@ -211,4 +222,8 @@ vector<string> EntityManager::getTags(int entity) {
 
 void EntityManager::addTag(int entity, const string& tag) {
 	tags[tag].insert(entity);
+}
+
+void EntityManager::setRecycleHandler(function<void(int)> handler) {
+	recycleHandler = move(handler);
 }

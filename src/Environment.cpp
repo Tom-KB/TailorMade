@@ -3,7 +3,7 @@
 using namespace std;
 
 Environment::Environment(shared_ptr<EntityManager> entityManager) : entityManager(entityManager), subscription(nullptr) {
-
+	attachRecycleHandler();
 }
 
 Environment::Environment(const string& entitiesPath, const string& componentsPath, const string& subscriptionsPath) {
@@ -21,6 +21,20 @@ Environment::Environment(const string& entitiesPath, const string& componentsPat
 	catch (exception& e) {
 		cerr << "Environment : " << e.what() << endl;
 	}
+
+	if (entityManager) attachRecycleHandler();
+}
+
+Environment::~Environment() {
+	if (entityManager) entityManager->setRecycleHandler(nullptr);
+}
+
+void Environment::attachRecycleHandler() {
+	entityManager->setRecycleHandler([this](int id) {
+		for (const auto& [_, manager] : mapNC) {
+			manager->unsubscribe(id);
+		}
+	});
 }
 
 void Environment::addManager(shared_ptr<ComponentManager> manager) {
@@ -117,15 +131,10 @@ int Environment::createEntity(const string& name, bool createFile, bool share) {
 }
 
 void Environment::removeEntity(const string& name, bool share) {
-	// Use EM remove and loop trough every CMs to unsubscribe the entity.
+	// entityManager->removeEntity runs the recycle handler set in attachRecycleHandler, which
+	// unsubscribes the ID from every ComponentManager.
 	int ID = entityManager->getEntity(name);
 	entityManager->removeEntity(name);
-
-	for (const auto& [key, value] : mapNC) {
-		if (value->hasEntity(ID, true)) {
-			value->unsubscribe(ID);
-		}
-	}
 
 	if (share) notify(ID);
 }
