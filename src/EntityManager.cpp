@@ -17,7 +17,15 @@ EntityManager::EntityManager(const string& directory) : directory(directory), co
 			throw runtime_error("Error : Can't read the file \"" + file + "\"");
 		}
 
-		nlohmann::json entityJSON = nlohmann::json::parse(entityFile); // Parse the JSON of the entity's file
+		nlohmann::json entityJSON;
+		try {
+			entityJSON = nlohmann::json::parse(entityFile); // Parse the JSON of the entity's file
+		}
+		catch (const exception& e) {
+			cerr << "EntityManager : cannot parse the entity file \"" << file << "\" : " << e.what() << endl;
+			continue;
+		}
+
 		vector<string> namesVector;
 		if (entityJSON.contains("name")) {
 			namesVector.push_back(entityJSON["name"]);
@@ -26,6 +34,8 @@ EntityManager::EntityManager(const string& directory) : directory(directory), co
 			namesVector = entityJSON["names"];
 		}
 		else {
+			cerr << "EntityManager : the entity file \"" << file
+				<< "\" has neither a \"name\" nor a \"names\" field, it is ignored." << endl;
 			continue;
 		}
 

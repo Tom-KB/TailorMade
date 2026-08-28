@@ -147,7 +147,13 @@ vector<shared_ptr<Component>> Environment::getComponents(const string& name) {
 
 shared_ptr<Component> Environment::getComponent(int entity, const string& name) {
 	if (mapNC.contains(name) && mapNC[name]->hasEntity(entity)) return mapNC[name]->getComponent(entity);
-	throw runtime_error("Error : The component \"" + name + "\" is not attached to \"" + entityManager->getName(entity) + "\".");
+
+	const string& entityName = entityManager->getName(entity);
+	const string who = entityName.empty() ? "entity #" + to_string(entity) : "\"" + entityName + "\"";
+	if (!mapNC.contains(name)) {
+		throw runtime_error("Error : no component named \"" + name + "\" is loaded (requested for " + who + ").");
+	}
+	throw runtime_error("Error : the component \"" + name + "\" is not attached to " + who + ".");
 }
 
 shared_ptr<Component> Environment::getComponent(const string& entityName, const string& name) {

@@ -4,10 +4,28 @@ using namespace std;
 
 Component::Component(const string& filename) : placeholder("") {
 	ifstream fileJSON(filename);
-	nlohmann::json file = nlohmann::json::parse(fileJSON);
+	if (!fileJSON) {
+		cerr << "Component : cannot open the component file \"" << filename << "\"." << endl;
+		return;
+	}
+
+	nlohmann::json file;
+	try {
+		file = nlohmann::json::parse(fileJSON);
+	}
+	catch (const exception& e) {
+		cerr << "Component : cannot parse the component file \"" << filename << "\" : " << e.what() << endl;
+		return;
+	}
+
+	if (!file.contains("name")) {
+		cerr << "Component : the component file \"" << filename << "\" has no \"name\" field, it is ignored." << endl;
+		return;
+	}
 	componentName = file["name"];
-	
+
 	// Load the components information from the given component's file
+	if (!file.contains("data")) return; // A component with a name but no data is valid, just empty.
 	for (const auto& data : file["data"].items()) {
 		// Name + Type (both as strings)
 		string name = data.key();
@@ -17,7 +35,8 @@ Component::Component(const string& filename) : placeholder("") {
 			dataMap.insert({ name, {type, strToType(type)} }); // {data's name, { type's name, type's default value }}
 		}
 		catch (exception& e) {
-			cerr << "Component : " << e.what() << endl;
+			cerr << "Component \"" << componentName << "\" (" << filename << ") : data \"" << name
+				 << "\" has an unknown type \"" << type << "\", it is ignored." << endl;
 		}
 	}
 
